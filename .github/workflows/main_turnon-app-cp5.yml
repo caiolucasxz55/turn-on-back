@@ -29,10 +29,24 @@ jobs:
           SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
+      - name: Resolve deploy JAR
+        id: resolve_jar
+        run: |
+          mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | sort)
+
+          if [ "${#jars[@]}" -ne 1 ]; then
+            echo "Expected exactly 1 deployable JAR, found ${#jars[@]}"
+            printf '%s\n' "${jars[@]}"
+            exit 1
+          fi
+
+          echo "Using JAR: ${jars[0]}"
+          echo "jar_path=${jars[0]}" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'turnon-app-cp5'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_f027bb274548417b8b32bd8151aa5be5 }}
-          package: '${{ github.workspace }}/build/libs/*.jar'
+          package: '${{ steps.resolve_jar.outputs.jar_path }}'
