@@ -43,16 +43,10 @@ jobs:
           echo "Using JAR: ${jars[0]}"
           echo "jar_path=${jars[0]}" >> "$GITHUB_OUTPUT"
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'turnon-app-cp5'
           slot-name: 'production'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_f027bb274548417b8b32bd8151aa5be5 }}
           package: '${{ steps.resolve_jar.outputs.jar_path }}'
