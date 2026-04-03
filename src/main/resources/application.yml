@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    url: "jdbc:sqlserver://turnon.database.windows.net:1433;database=turnon;user=turnon@turnon;password=turnon;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+    username: turnon@turnon
+    password: turnon
     driver-class-name: org.postgresql.Driver
 
   jpa:

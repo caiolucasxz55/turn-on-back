@@ -5,9 +5,9 @@ services:
     image: postgres:16-alpine
     container_name: musicapp-postgres
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: turnon
+      POSTGRES_USER: turnon
+      POSTGRES_PASSWORD: turnon
     ports:
       - "5432:5432"
     volumes:
@@ -15,7 +15,7 @@ services:
     networks:
       - musicapp-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U turnon -d turnon"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,9 +26,9 @@ services:
       dockerfile: Dockerfile
     container_name: musicapp-back
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://turnon.database.windows.net:1433;database=turnon;user=turnon@turnon;password=turnon;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+      SPRING_DATASOURCE_USERNAME: turnon@turnon
+      SPRING_DATASOURCE_PASSWORD: turnon
     ports:
       - "8080:8080"
     depends_on:
