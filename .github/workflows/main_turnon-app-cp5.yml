@@ -1,52 +1,33 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: 'Build and deploy JAR app to Azure Web App: turnon-app-cp5'
 
 on:
   push:
     branches:
-      - main
+    - main
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
+    
+    - name: Set up Java version
+      uses: actions/setup-java@v1
+      with:
+        java-version: '21'
+    
+    - name: Build with Maven
+      run: mvn clean install
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew build -x test 
-        env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-
-      - name: Resolve deploy JAR
-        id: resolve_jar
-        run: |
-          mapfile -t jars < <(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | sort)
-
-          if [ "${#jars[@]}" -ne 1 ]; then
-            echo "Expected exactly 1 deployable JAR, found ${#jars[@]}"
-            printf '%s\n' "${jars[@]}"
-            exit 1
-          fi
-
-          echo "Using JAR: ${jars[0]}"
-          echo "jar_path=${jars[0]}" >> "$GITHUB_OUTPUT"
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'turnon-app-cp5'
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_f027bb274548417b8b32bd8151aa5be5 }}
-          package: '${{ steps.resolve_jar.outputs.jar_path }}'
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: 'turnon-app-cp5'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_f027bb274548417b8b32bd8151aa5be5 }}
+        package: '${{ github.workspace }}/target/*.jar'
