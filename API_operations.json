@@ -1,0 +1,70 @@
+{
+  "baseUrlLocal": "http://localhost:8080",
+  "endpoints": {
+    "/genres": {
+      "GET": {
+        "description": "Listar todos os gêneros",
+        "response": [{ "id": 1, "name": "Rock" }]
+      },
+      "POST": {
+        "description": "Criar gênero",
+        "request": { "name": "Eletrônica" },
+        "response": { "id": 10, "name": "Eletrônica" }
+      }
+    },
+    "/songs": {
+      "GET": {
+        "description": "Listar músicas (autenticado)",
+        "response": [{ "id": 1, "title": "Bohemian Rhapsody", "artist": "Queen", "genre": "Rock" }]
+      },
+      "POST": {
+        "description": "Criar música",
+        "request": { "title": "Nova Música", "artist": "Autor", "genreId": 1 },
+        "response": { "id": 5, "title": "Nova Música", "artist": "Autor", "genreId": 1 }
+      },
+      "PUT": {
+        "description": "Atualizar música",
+        "request": { "title": "Título Atualizado" },
+        "response": { "id": 5, "title": "Título Atualizado" }
+      },
+      "DELETE": {
+        "description": "Remover música",
+        "response": { "status": "deleted" }
+      }
+    },
+    "/playlists": {
+      "GET": {
+        "description": "Listar playlists do usuário (autenticado)",
+        "response": [{ "id": 1, "name": "Favoritas", "userId": 1 }]
+      },
+      "POST": {
+        "description": "Criar playlist",
+        "request": { "name": "Minha Playlist" },
+        "response": { "id": 2, "name": "Minha Playlist" }
+      },
+      "PUT": {
+        "description": "Atualizar playlist",
+        "request": { "name": "Nome Novo" },
+        "response": { "id": 2, "name": "Nome Novo" }
+      },
+      "DELETE": {
+        "description": "Deletar playlist",
+        "response": { "status": "deleted" }
+      }
+    },
+    "/auth/register": {
+      "POST": {
+        "description": "Registrar usuário",
+        "request": { "name": "João", "email": "joao@example.com", "password": "123456" },
+        "response": { "token": "<jwt>", "user": { "id": 1, "name": "João", "email": "joao@example.com" } }
+      }
+    },
+    "/auth/login": {
+      "POST": {
+        "description": "Login e recebimento de token",
+        "request": { "email": "joao@example.com", "password": "123456" },
+        "response": { "token": "<jwt>" }
+      }
+    }
+  }
+}
